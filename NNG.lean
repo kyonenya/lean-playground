@@ -51,9 +51,10 @@ axiom five_eq_succ_four : (5 : MyNat) = MyNat.succ 4
 
 axiom add_zero (n : MyNat) : n + 0 = n
 
-axiom add_succ (a b : MyNat) : a + MyNat.succ b = MyNat.succ (a + b)
+/-- succ outside -/
+axiom add_succ (a b : MyNat) : a + succ b = succ (a + b)
 
-theorem succ_eq_add_one (n : MyNat) : MyNat.succ n = n + 1 := by
+theorem succ_eq_add_one (n : MyNat) : succ n = n + 1 := by
   rw [one_eq_succ_zero]
   rw [add_succ]
   rw [add_zero]
@@ -110,19 +111,16 @@ theorem _apply_and_exact (x y : MyNat)
   have h3 : y = 42 := h2 h1 -- apply h2 at h1
   exact h3
 
-/--
- - 必要なのが Y なら、`succ_inj h` のように X を渡す必要がある
- - 必要なのが X → Y なら、関数 `succ_inj` を引数省略で書ける
- -/
-axiom succ_inj {a b : MyNat} :
-  MyNat.succ a = MyNat.succ b → a = b
+/-- a b → (succ a = succ b) → a = b -/
+axiom succ_inj (a b : MyNat) :
+  succ a = succ b → a = b
 
 theorem _example_succ_inj (x : MyNat)
   (h : x + 1 = 4) :
   x = 3 := by
   rw [← succ_eq_add_one] at h
   rw [four_eq_succ_three] at h
-  have h2 : x = 3 := succ_inj h
+  have h2 : x = 3 := succ_inj x 3 h
   exact h2
 
 theorem _apply_backwards (x : MyNat)
@@ -132,7 +130,7 @@ theorem _apply_backwards (x : MyNat)
   rw [succ_eq_add_one, ← four_eq_succ_three]
   exact h
 
-theorem _example_intro (x : MyNat) :
+example (x : MyNat) :
   x = 24 → x = 24 := by
   intro h
   exact h
@@ -176,9 +174,71 @@ theorem _two_ne_three :
   repeat rw [add_succ]
   rw [add_zero]
   intro h
-  have h2 : succ (succ (succ 0)) = succ (succ 0) := succ_inj h
-  replace h2 : succ (succ 0) = succ 0 := succ_inj h2
-  replace h2 : succ 0 = 0 := succ_inj h2
+  have h2 : succ (succ (succ 0)) = succ (succ 0) := succ_inj (succ (succ (succ 0))) (succ (succ 0)) h
+  replace h2 : succ (succ 0) = succ 0 := succ_inj (succ (succ 0)) ((succ 0)) h2
+  replace h2 : succ 0 = 0 := succ_inj (succ 0) 0 h2
   symm at h2
   replace h2 : False := zero_ne_succ 0 h2 -- HOC
   exact h2
+
+---- Algorithm World ----
+
+theorem add_left_comm (a b c : MyNat) :
+  a + (b + c) = b + (a + c) := by
+  rw [← add_assoc]
+  rw [add_comm a b]
+  rw [add_assoc]
+
+theorem _example_comm (x y z w : MyNat) :
+  x + y + (z + w) = x + z + w + y := by
+  repeat rw [add_assoc] -- blacket all
+  rw [add_left_comm y z /-w-/]
+  rw [add_comm y w]
+
+theorem _example_simp {b c d f h g e} (a : MyNat) :
+  d + f + (h + (a + c)) + (g + e + b) = a + b + c + d + e + f + g + h := by
+  simp only [add_left_comm, add_comm]
+
+-- macro "simp_add" : tactic => `(tactic|(
+  -- simp only [add_assoc, add_left_comm, add_comm]))
+macro "simp_add" : tactic =>
+  `(tactic| simp only [add_assoc, add_left_comm, add_comm])
+
+theorem _example_simp_2 {b c d f h g e} (a : MyNat) :
+  d + f + (h + (a + c)) + (g + e + b) = a + b + c + d + e + f + g + h := by
+  simp_add
+
+def pred : MyNat → MyNat
+  | 0 => 0 -- precisely 'none'
+  | succ n => n
+
+axiom pred_succ (n: MyNat) :
+  pred (succ n) = n
+
+theorem _succ_inj_proof (a b : MyNat) :
+  succ a = succ b → a = b := by
+  intro h
+  rw [← pred_succ a]
+  rw [h]
+  rw [pred_succ]
+
+/-- 述語：命題が返ってくる関数 -/
+def is_zero : MyNat → Prop
+  | 0 => True
+  | succ _n => False
+
+theorem is_zero_zero :
+  is_zero 0 = True := by
+  rfl
+
+theorem is_zero_succ (n : MyNat) :
+  is_zero (succ n) = False := by
+  rfl
+
+theorem succ_ne_zero (n : MyNat) :
+  succ n ≠ 0 := by
+  intro h
+  rw [← is_zero_succ n]
+  rw [h]
+  rw [is_zero_zero]
+  trivial
