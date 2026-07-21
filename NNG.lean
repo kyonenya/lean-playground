@@ -181,6 +181,40 @@ theorem _two_ne_three :
   replace h2 : False := zero_ne_succ 0 h2 -- HOC
   exact h2
 
+---- Advanced Addition World ----
+
+theorem add_right_cancel (a b n : MyNat)
+  (h1 : a + n = b + n) :
+  a = b := by
+  induction n with
+  | zero =>
+    rw [add_zero, add_zero] at h1
+    exact h1
+  | succ n ih =>
+    rw [add_succ, add_succ] at h1
+    have h2 : a + n = b + n := succ_inj (a + n) (b + n) h1
+    exact ih h2
+
+theorem add_left_cancel (a b n : MyNat)
+  (h1 : n + a = n + b) :
+  a = b := by
+  repeat rw [add_comm n] at h1
+  exact add_right_cancel a b n h1
+
+theorem add_left_eq_self (x y : MyNat)
+  (h1 : x + y = y) :
+  x = 0 := by
+  conv at h1 =>
+    rhs
+    rw [← zero_add y]
+  exact add_right_cancel x 0 y h1
+
+theorem add_right_eq_self (x y : MyNat)
+  (h1 : x + y = x) :
+  y = 0 := by
+  rw [add_comm] at h1
+  exact add_left_eq_self y x h1
+
 ---- Algorithm World ----
 
 theorem add_left_comm (a b c : MyNat) :
@@ -273,4 +307,7 @@ macro "decide" : tactic => `(tactic|(
 ))
 
 example : (20 : MyNat) + 20 = 40 := by
+  decide
+
+example : (2 : MyNat) + 2 ≠ 5 := by
   decide
