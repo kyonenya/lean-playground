@@ -15,15 +15,15 @@ def ofNat : Nat → MyNat
   | Nat.zero => MyNat.zero
   | Nat.succ n => MyNat.succ (ofNat n)
 
--- 帰納法の `zero` と数値表記の `0` を定義上まったく同じものにする。
-@[reducible] instance : OfNat MyNat 0 where
-  ofNat := MyNat.zero
-
--- 0 以外の数値表記も使えるようにする。0 の場合とは重ならない。
-@[reducible] instance {n : Nat} : OfNat MyNat (Nat.succ n) where
-  ofNat := MyNat.ofNat (Nat.succ n)
+instance instOfNat {n : Nat} : OfNat MyNat n where
+  ofNat := MyNat.ofNat n
 
 theorem zero_eq_0 : MyNat.zero = 0 := rfl
+
+/-- `MyNat`の正の数値を1段の`succ`として展開する。 -/
+theorem ofNat_succ {n : Nat} :
+    (OfNat.ofNat (Nat.succ n) : MyNat) =
+      MyNat.succ (OfNat.ofNat n) := rfl
 
 -- 帰納法の基底ケースを、コンストラクタ `zero` ではなく
 -- 普段使う数値表記 `0` で表示・証明できるようにする。
@@ -215,9 +215,9 @@ def pred : MyNat → MyNat
 axiom pred_succ (n: MyNat) :
   pred (succ n) = n
 
-theorem _succ_inj_proof (a b : MyNat) :
-  succ a = succ b → a = b := by
-  intro h
+theorem _succ_inj_proof (a b : MyNat)
+  (h : succ a = succ b) :
+  a = b := by
   rw [← pred_succ a]
   rw [h]
   rw [pred_succ]
@@ -242,3 +242,35 @@ theorem succ_ne_zero (n : MyNat) :
   rw [h]
   rw [is_zero_zero]
   trivial
+
+theorem succ_ne_succ (m n : MyNat)
+  (h : m ≠ n) :
+  succ m ≠ succ n := by
+  intro heq
+  have heq2 : m = n := succ_inj m n heq
+  -- exact h heq2 -- m = n, m ≠ n
+  rw [heq2] at h
+  apply h -- (m = n) → False
+  rfl
+
+instance instDecidableEq : DecidableEq MyNat
+  | 0, 0 => isTrue <| by
+      rfl
+  | succ m, 0 => isFalse <| by
+      exact succ_ne_zero m
+  | 0, succ n => isFalse <| by
+      exact zero_ne_succ n
+  | succ m, succ n =>
+      match instDecidableEq m n with
+      | isTrue h => isTrue <| by
+          rw [h]
+      | isFalse h => isFalse <| by
+          exact succ_ne_succ m n h
+
+macro "decide" : tactic => `(tactic|(
+  try simp only [ofNat_succ, zero_eq_0, add_zero, add_succ]
+  try decide
+))
+
+example : (20 : MyNat) + 20 = 40 := by
+  decide
