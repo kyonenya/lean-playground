@@ -226,6 +226,7 @@ theorem add_right_eq_zero (a b : MyNat)
     rw [add_succ] at h1
     replace h1 : False := zero_ne_succ (a + b) h1.symm
     -- contradiction
+    -- cases h1
     exact False.elim h1 -- False -> any Prop
 
 theorem add_left_eq_zero (a b : MyNat)
@@ -233,6 +234,56 @@ theorem add_left_eq_zero (a b : MyNat)
   b = 0 := by
   rw [add_comm] at h
   exact add_right_eq_zero b a h
+
+---- ≤ World ----
+
+def le (a b : MyNat) : Prop :=
+  ∃ c : MyNat, b = a + c
+
+instance : LE MyNat where
+  le := MyNat.le
+
+abbrev ge (a b : MyNat) : Prop :=
+  b ≤ a
+
+macro "use " witness:term : tactic =>
+  `(tactic| refine ⟨$witness, ?_⟩)
+
+theorem le_refl (x : MyNat) :
+  -- ∃ 0, x = x + 0
+  x ≤ x := by
+  -- construct the proof in this form, so remaining hole condition as the new goal
+  refine ⟨0, ?_⟩ -- witness + condition? := proof
+  rw [add_zero]
+
+theorem zero_le (x : MyNat) :
+  0 ≤ x := by
+  refine ⟨x, ?_⟩
+  rw [zero_add]
+
+theorem le_succ_self (x : MyNat) :
+  x ≤ succ x := by
+  refine ⟨1, ?_⟩
+  rw [succ_eq_add_one]
+
+theorem le_trans (x y z : MyNat)
+  (hxy: x ≤ y)
+  (hyz: y ≤ z) :
+  x ≤ z := by
+  -- destruct the proof in this form, so remaining condition as the new assumption
+  rcases hxy with ⟨a, ha⟩ -- proof := witness + condition?
+  rcases hyz with ⟨b, hb⟩
+  rw [hb, ha]
+  refine ⟨a + b, ?_⟩
+  rw [add_assoc]
+
+theorem le_zero (x : MyNat)
+  (h: x ≤ 0) : -- ∃c, x + c = 0
+  x = 0 := by
+  rcases h with ⟨c, hc⟩
+  symm at hc
+  replace hc : x = 0 := add_right_eq_zero x c hc
+  exact hc
 
 ---- Algorithm World ----
 
@@ -252,8 +303,6 @@ theorem _example_simp {b c d f h g e} (a : MyNat) :
   d + f + (h + (a + c)) + (g + e + b) = a + b + c + d + e + f + g + h := by
   simp only [add_left_comm, add_comm]
 
--- macro "simp_add" : tactic => `(tactic|(
-  -- simp only [add_assoc, add_left_comm, add_comm]))
 macro "simp_add" : tactic =>
   `(tactic| simp only [add_assoc, add_left_comm, add_comm])
 
