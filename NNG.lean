@@ -111,8 +111,8 @@ theorem _apply_and_exact (x y : MyNat)
   have h3 : y = 42 := h2 h1 -- apply h2 at h1
   exact h3
 
-/-- a b → (succ a = succ b) → a = b -/
-axiom succ_inj (a b : MyNat) :
+/-- implicit args -/
+axiom succ_inj {a b : MyNat} :
   succ a = succ b → a = b
 
 theorem _example_succ_inj (x : MyNat)
@@ -120,7 +120,7 @@ theorem _example_succ_inj (x : MyNat)
   x = 3 := by
   rw [← succ_eq_add_one] at h
   rw [four_eq_succ_three] at h
-  have h2 : x = 3 := succ_inj x 3 h
+  have h2 : x = 3 := succ_inj h
   exact h2
 
 theorem _apply_backwards (x : MyNat)
@@ -174,9 +174,9 @@ theorem _two_ne_three :
   repeat rw [add_succ]
   rw [add_zero]
   intro h
-  have h2 : succ (succ (succ 0)) = succ (succ 0) := succ_inj (succ (succ (succ 0))) (succ (succ 0)) h
-  replace h2 : succ (succ 0) = succ 0 := succ_inj (succ (succ 0)) ((succ 0)) h2
-  replace h2 : succ 0 = 0 := succ_inj (succ 0) 0 h2
+  have h2 : succ (succ (succ 0)) = succ (succ 0) := succ_inj h
+  replace h2 : succ (succ 0) = succ 0 := succ_inj h2
+  replace h2 : succ 0 = 0 := succ_inj h2
   symm at h2
   replace h2 : False := zero_ne_succ 0 h2 -- HOC
   exact h2
@@ -192,7 +192,7 @@ theorem add_right_cancel (a b n : MyNat)
     exact h1
   | succ n ih =>
     rw [add_succ, add_succ] at h1
-    have h2 : a + n = b + n := succ_inj (a + n) (b + n) h1
+    have h2 : a + n = b + n := succ_inj h1
     exact ih h2
 
 theorem add_left_cancel (a b n : MyNat)
@@ -281,7 +281,7 @@ theorem succ_ne_succ (m n : MyNat)
   (h : m ≠ n) :
   succ m ≠ succ n := by
   intro heq
-  have heq2 : m = n := succ_inj m n heq
+  have heq2 : m = n := succ_inj heq
   -- exact h heq2 -- m = n, m ≠ n
   rw [heq2] at h
   apply h -- (m = n) → False
