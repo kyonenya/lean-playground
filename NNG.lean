@@ -27,7 +27,7 @@ theorem ofNat_succ {n : Nat} :
 
 -- 帰納法の基底ケースを、コンストラクタ `zero` ではなく
 -- 普段使う数値表記 `0` で表示・証明できるようにする。
-@[induction_eliminator, elab_as_elim]
+@[induction_eliminator, cases_eliminator, elab_as_elim]
 def induction {motive : MyNat → Sort u}
     (zero : motive 0)
     (succ : ∀ n, motive n → motive (MyNat.succ n)) :
@@ -214,6 +214,25 @@ theorem add_right_eq_self (x y : MyNat)
   y = 0 := by
   rw [add_comm] at h1
   exact add_left_eq_self y x h1
+
+theorem add_right_eq_zero (a b : MyNat)
+  (h1 : a + b = 0) :
+  a = 0 := by
+  cases b with
+  | zero =>
+    rw [add_zero] at h1
+    exact h1
+  | succ b =>
+    rw [add_succ] at h1
+    replace h1 : False := zero_ne_succ (a + b) h1.symm
+    -- contradiction
+    exact False.elim h1 -- False -> any Prop
+
+theorem add_left_eq_zero (a b : MyNat)
+  (h : a + b = 0) :
+  b = 0 := by
+  rw [add_comm] at h
+  exact add_right_eq_zero b a h
 
 ---- Algorithm World ----
 
