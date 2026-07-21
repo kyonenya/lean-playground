@@ -285,6 +285,20 @@ theorem le_zero (x : MyNat)
   replace hc : x = 0 := add_right_eq_zero x c hc
   exact hc
 
+theorem anti_symm (x y : MyNat)
+  (hxy: x ≤ y) -- ∃c, x + c = y
+  (hyx: y ≤ x) :
+  x = y := by
+  rcases hxy with ⟨c, h1⟩
+  rcases hyx with ⟨d, h2⟩
+  rw [h2] at h1
+  rw [add_assoc] at h1
+  symm at h1
+  have h3 : d + c = 0 := add_right_eq_self y (d + c) h1
+  replace h3 : d = 0 := add_right_eq_zero d c h3
+  rw [h3, add_zero] at h2
+  exact h2
+
 ---- Algorithm World ----
 
 theorem add_left_comm (a b c : MyNat) :
