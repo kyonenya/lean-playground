@@ -346,6 +346,35 @@ theorem le_total (x y : MyNat) :
       refine ⟨e, ?_⟩
       rw [add_succ, succ_add]
 
+/-- lemma -/
+theorem succ_le_succ (x y : MyNat)
+    (hx: succ x ≤ succ y) :
+    (x ≤ y) := by
+  rcases hx with ⟨a, ha⟩
+  rw [succ_add] at ha
+  replace ha : y = x + a := succ_inj ha
+  rw [ha]
+  refine ⟨a, ?_⟩
+  rfl
+
+theorem le_one (x : MyNat)
+    (hx : x ≤ 1) :
+    (x = 0 ∨ x = 1) := by
+  rcases hx with ⟨a, ha⟩
+  symm at ha
+  cases a with
+  | zero =>
+    right
+    rw [add_zero] at ha
+    exact ha
+  | succ d =>
+    left
+    rw [one_eq_succ_zero] at ha
+    rw [add_succ] at ha
+    replace ha : x + d = 0 := succ_inj ha
+    replace ha : x = 0 := add_right_eq_zero x d ha
+    exact ha
+
 ---- Algorithm World ----
 
 theorem add_left_comm (a b c : MyNat) :
