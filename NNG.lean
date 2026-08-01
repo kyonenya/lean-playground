@@ -310,6 +310,16 @@ example (x y : MyNat)
     left
     exact hy
 
+/-- Lemma of `le_total` -/
+theorem le_then_le_succ (x y : MyNat)
+    (h : x ≤ y) :
+    x ≤ succ y := by
+  rcases h with ⟨a, ha⟩
+  rw [ha]
+  refine ⟨a+1, ?_⟩
+  rw [succ_eq_add_one]
+  rw [add_assoc]
+
 theorem le_total (x y : MyNat) :
     (x ≤ y ∨ y ≤ x) := by
   induction y with
@@ -320,11 +330,7 @@ theorem le_total (x y : MyNat) :
     cases ih with
     | inl hx =>
       left
-      rcases hx with ⟨a, ha⟩
-      refine ⟨a + 1, ?_⟩
-      rw [ha]
-      rw [succ_eq_add_one]
-      rw [add_assoc]
+      exact le_then_le_succ x d hx
     | inr hy =>
       rcases hy with ⟨b, hb⟩
       cases b with
