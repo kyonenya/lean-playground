@@ -310,7 +310,7 @@ example (x y : MyNat)
     left
     exact hy
 
-/-- Lemma of `le_total` -/
+/-- lemma of `le_total` -/
 theorem le_then_le_succ (x y : MyNat)
     (h : x ≤ y) :
     x ≤ succ y := by
@@ -357,6 +357,7 @@ theorem succ_le_succ (x y : MyNat)
   refine ⟨a, ?_⟩
   rfl
 
+/-- lemma -/
 theorem le_one (x : MyNat)
     (hx : x ≤ 1) :
     (x = 0 ∨ x = 1) := by
@@ -374,6 +375,28 @@ theorem le_one (x : MyNat)
     replace ha : x + d = 0 := succ_inj ha
     replace ha : x = 0 := add_right_eq_zero x d ha
     exact ha
+
+theorem le_two (x : MyNat)
+    (hx: x ≤ 2) :
+    (x = 0 ∨ x = 1 ∨ x = 2) := by
+  cases x with --> le_one
+  | zero =>
+    left
+    rfl
+  | succ d =>
+    rw [two_eq_succ_one] at hx
+    replace hx : d ≤ 1 := succ_le_succ d 1 hx
+    replace hx : d = 0 ∨ d = 1 := le_one d hx
+    right
+    cases hx with
+    | inl h0 =>
+      left
+      rw [h0]
+      exact one_eq_succ_zero.symm
+    | inr h1 =>
+      right
+      rw [h1]
+      exact two_eq_succ_one.symm
 
 ---- Algorithm World ----
 
