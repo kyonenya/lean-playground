@@ -285,7 +285,7 @@ theorem le_zero (x : MyNat)
   replace hc : x = 0 := add_right_eq_zero x c hc
   exact hc
 
-theorem anti_symm (x y : MyNat)
+theorem le_antisymm (x y : MyNat)
   (hxy: x ≤ y) -- ∃c, x + c = y
   (hyx: y ≤ x) :
   x = y := by
@@ -298,6 +298,47 @@ theorem anti_symm (x y : MyNat)
   replace h3 : d = 0 := add_right_eq_zero d c h3
   rw [h3, add_zero] at h2
   exact h2
+
+example (x y : MyNat)
+    (h : x = 37 ∨ y = 42) :
+    (y = 42 ∨ x = 37) := by
+  cases h with -- destruct ∨
+  | inl hx =>
+    right
+    exact hx
+  | inr hy =>
+    left
+    exact hy
+
+theorem le_total (x y : MyNat) :
+    (x ≤ y ∨ y ≤ x) := by
+  induction y with
+  | zero =>
+    right
+    apply zero_le
+  | succ d ih =>
+    cases ih with
+    | inl hx =>
+      left
+      rcases hx with ⟨a, ha⟩
+      refine ⟨a + 1, ?_⟩
+      rw [ha]
+      rw [succ_eq_add_one]
+      rw [add_assoc]
+    | inr hy =>
+      rcases hy with ⟨b, hb⟩
+      cases b with
+      | zero =>
+      left
+      rw [add_zero] at hb
+      refine ⟨1, ?_⟩
+      rw [hb]
+      exact succ_eq_add_one d
+      | succ e =>
+      right
+      rw [hb]
+      refine ⟨e, ?_⟩
+      rw [add_succ, succ_add]
 
 ---- Algorithm World ----
 
