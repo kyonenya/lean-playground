@@ -1,14 +1,9 @@
 import Mathlib
-
--- この世界における集合の要素は、Uと呼ばれる宇宙から得られる。対象 x が宇宙 U に属することを示すには、x : U と書く。A が U からの対象の集合であることを示すには、A : Set U と書く。（Lean で用いられる用語では、x の型は U、A の型は Set U である。） x が A の要素であることを表すには、x ∈ A と記述します。（記号 ∈ は、\mem または \in を入力し、その後にスペースを入れることで入力できます。）
-
--- AとBが集合である場合、Aのすべての要素がBの要素でもあるとき、AはBの部分集合であると言います。表記A ⊆ Bは、AがBの部分集合であることを意味します。（記号⊆を入力するには、\subと入力し、続けてスペースを入れます。）
-
-
 open Set
 
 variable {U : Type}
 
+-- Subset World
 
 example
     (x : U) -- 対象 x は宇宙 U に属する
@@ -47,7 +42,7 @@ example
 
 theorem Subset.refl
     (A : Set U) :
-    A ⊆ A := by -- x ∈ A → x ∈ A
+    A ⊆ A := by -- ∃x, x ∈ A → x ∈ A
   intro h h2 -- destructure definition
   exact h2
 
@@ -60,11 +55,13 @@ theorem Subset.trans
   have h4 : x ∈ B := h1 h3
   exact h2 h4
 
+-- Complement World
+
 example
     (x : U)
     (A B : Set U)
     (h1 : x ∈ A)
-    (h2 : x ∉ B) : -- \nin
+    (h2 : x ∉ B) : -- ¬ (x ∈ A) \nin
     ¬A ⊆ B := by -- A ⊆ B → False
   by_contra h3 -- goal is a negative statement
   have h4 : x ∈ B := h3 h1
@@ -86,3 +83,40 @@ theorem compl_subset_compl_of_subset
   have h4 : x ∈ B := h h3
   rw [mem_compl_iff x B] at h2
   exact h2 h4
+
+axiom Subset.antisymm
+    (A B : Set U)
+    (h1 : A ⊆ B)
+    (h2 : B ⊆ A) :
+    A = B
+
+theorem _compl_compl
+    (A : Set U) :
+    Aᶜᶜ = A := by
+  apply Subset.antisymm
+  -- case h1
+  intro x h
+  repeat rw [mem_compl_iff x] at h
+  push Not at h -- ¬ x ∉ A ↔ ¬¬ x ∈ A → x ∈ A
+  exact h
+  -- case h2
+  intro x h
+  repeat rw [mem_compl_iff x]
+  push Not
+  exact h
+
+example
+    (A B : Set U) :
+    A ⊆ B ↔ Bᶜ ⊆ Aᶜ := by
+  apply Iff.intro
+  -- case right
+  intro h
+  apply compl_subset_compl_of_subset A B at h
+  exact h
+  -- case left
+  intro h
+  apply compl_subset_compl_of_subset Bᶜ Aᶜ at h
+  repeat rw [_compl_compl A, _compl_compl B] at h
+  exact h
+
+-- Intersection World
