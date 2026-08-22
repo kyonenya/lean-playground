@@ -1,7 +1,7 @@
 name = "lean-playground"
 version = "0.1.0"
 keywords = ["math"]
-defaultTargets = ["LeanGameServer", "NatCommMonoid"]
+defaultTargets = ["LeanGameServer", "NatCommMonoid", "LeanBook"]
 
 [leanOptions]
 pp.unicode.fun = true
@@ -18,3 +18,7 @@ globs = ["LeanGameServer.+"]
 [[lean_lib]]
 name = "NatCommMonoid"
 globs = ["NatCommMonoid.+"]
+
+[[lean_lib]]
+name = "LeanBook"
+globs = ["LeanBook.+"]

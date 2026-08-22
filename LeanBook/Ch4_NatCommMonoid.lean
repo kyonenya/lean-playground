@@ -1,25 +1,10 @@
-inductive MyNat where -- 帰納的定義
-  | zero
-  | succ (n : MyNat)
-
-def MyNat.ofNat (n : Nat) : MyNat :=
-  match n with
-  | 0 => MyNat.zero
-  | n + 1 => MyNat.succ (MyNat.ofNat n)
+import LeanBook.Ch2_NaturalNumber
 
 -- `OfNat` 型クラスの `インスタンス`
 @[default_instance]
 instance (n : Nat) : OfNat MyNat n where
   ofNat := MyNat.ofNat n
 -- 文字 0, 1, 2... が使えるようになる
-
-#check 0 -- MyNat
-
-def MyNat.add (m n : MyNat) : MyNat :=
-  -- 第二引数に対してパターンマッチ
-  match n with
-  | zero => m
-  | succ n => succ (add m n)
 
 instance : Add MyNat where
   add := MyNat.add

@@ -18,6 +18,7 @@ def MyNat.two := MyNat.succ .one
 
 def MyNat.add (m n : MyNat) : MyNat :=
   match n with
+  -- 第二引数に対してパターンマッチ
   | zero => m
   -- この n は 別スコープの変数、k でもいい
   | succ n => succ (add m n) -- succ を外出し
