@@ -78,7 +78,7 @@ attribute [simp] MyNat.add_zero MyNat.zero_add
 example (n : MyNat) : 0 + (n + 0) = n := by
   simp
 
-/-- MyNat において 0 はzero だと解釈される-/
+/-- MyNat において 0 は zero だと解釈される-/
 theorem MyNat.ctor_eq_zero : MyNat.zero = 0 := by
   rfl
 
