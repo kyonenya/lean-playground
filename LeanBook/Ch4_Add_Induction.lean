@@ -1,4 +1,4 @@
-import LeanBook.Ch2_NaturalNumber
+import LeanBook.Ch2_MyNat
 
 -- ## TypeClass
 

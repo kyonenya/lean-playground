@@ -1,4 +1,6 @@
-import LeanBook.Ch4_NatCommMonoid
+import LeanBook.Ch4_Add_Induction
+
+-- ## Mult
 
 def MyNat.mul (m n : MyNat) :=
   match n with
@@ -88,6 +90,8 @@ theorem MyNat.mul_assoc (l m n : MyNat) : l * m * n = l * (m * n) := by
     repeat rw [MyNat.mul_add]
     simp only [mul_one]
     rw [ih]
+
+-- ## NatSemiring
 
 -- `ac_rfl` というタクティクに結合・交換法則を登録する
 instance : Std.Associative (α := MyNat) (· * ·) where
