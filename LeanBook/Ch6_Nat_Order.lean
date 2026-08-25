@@ -5,7 +5,7 @@ import LeanBook.Ch5_Mul_Macro
 /-- MyNat の各コンストラクタの像は重ならない -/
 example (n : MyNat) : MyNat.succ n ≠ MyNat.zero := by
   intro h
-  injection h -- 帰納的に定義したものがもつ性質より従う
+  injection h -- [帰納的に定義したものがもつ性質より従う]
 
 /-- MyNat のコンストラクタは単射 -/
 example (m n : MyNat) (h : MyNat.succ m = MyNat.succ n) : m = n := by
@@ -88,3 +88,39 @@ theorem MyNat.eq_zero_of_add_eq_zero :
 theorem MyNat.add_eq_zero_of_eq_zero : m = 0 ∧ n = 0 → m + n = 0 := by
   intro h
   simp_all only [add_zero]
+
+@[simp]
+theorem MyNat.add_eq_zero_iff_eq_zero : m + n = 0 ↔ m = 0 ∧ n = 0 := by
+  constructor <;> intro h
+  · induction n with
+    | zero =>
+      simp_all only [add_zero, and_self]
+    | succ n ih =>
+      exfalso
+      rw [← MyNat.add_assoc] at h
+      injection h -- +1 して 0 にはならん
+  · simp_all only [add_zero]
+
+@[simp]
+theorem MyNat.mul_eq_zero (m n : MyNat) : m * n = 0 ↔ m = 0 ∨ n = 0 := by
+  constructor <;> intro h
+  case mpr =>
+    cases h <;> simp_all
+  case mp =>
+    induction n with
+    | zero => simp_all only [mul_zero, or_true]
+    | succ n ih =>
+      left
+      simp only [MyNat.mul_add, MyNat.mul_one] at h
+      -- have : m * n + m = 0 := calc
+      --   _ = m * (n + 1) := by distrib
+      --   _ = 0 := by rw [h]
+      simp_all only [add_eq_zero_iff_eq_zero]
+
+example (n m : MyNat) : n + (1 + m) = n + 2 → m = 1 := by
+  intro h
+  simp_all only [↓MyNat.add_left_cancel_iff]
+  rw [show 2 = 1 + 1 from rfl] at h -- 自作 distrib マクロはまだ h に対して適用できない
+  simp_all only [↓MyNat.add_left_cancel_iff]
+
+-- ## OrderDef

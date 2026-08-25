@@ -125,7 +125,8 @@ theorem MyNat.add_comm (m n : MyNat) : m + n = n + m := by
     exact ih
 
 -- [inductionの帰納型から自動生成される補題]
-#check MyNat.succ.injEq -- (n.succ = m.succ) = (n = m)
+#check MyNat.rec -- 帰納法が生成できる
+#check MyNat.succ.injEq -- (n.succ = m.succ) = (n = m) succ の単射性
 #check MyNat.noConfusion -- zero ≠ succ n
 
 theorem MyNat.add_assoc (l m n : MyNat) : l + m + n = l + (m + n) := by
