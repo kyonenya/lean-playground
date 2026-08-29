@@ -231,7 +231,7 @@ theorem MyNat.le.intro (h : n + k = m) : n ≤ m := by
   | succ k ih =>
     apply MyNat.le_add_right
 
-/-- 順序関係 n ≤ m を k の足し算で書き換える -/
+/-- 順序関係 n ≤ m を k の足し算で書き換える【頻出】 -/
 theorem MyNat.le_iff_add : n ≤ m ↔ ∃ k, n + k = m := by
   constructor <;> intro h
   · exact MyNat.le.dest h
@@ -327,7 +327,7 @@ theorem MyNat.eq_or_lt_of_le {m n : MyNat} : n ≤ m → n = m ∨ n < m := by
     rw [← ht]
     ac_rfl
 
-/-- 狭義順序は広義順序よりも「強い」-/
+/-- 【重要】狭義順序は広義順序よりも「強い」-/
 theorem MyNat.le_of_lt {a b : MyNat} (h : a < b) : a ≤ b := by
   dsimp[(. < .), MyNat.lt] at h
   have : a ≤ b := calc
