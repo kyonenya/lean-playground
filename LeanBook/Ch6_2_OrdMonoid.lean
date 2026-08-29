@@ -1,4 +1,4 @@
-import LeanBook.Ch6_Nat_Order
+import LeanBook.Ch6_1_Order
 import LeanBook.CompatibleTag
 
 variable {a b m n : MyNat}
@@ -86,6 +86,7 @@ example (h1 : m ≤ n) (h2 : a ≤ b) : m + a ≤ n + b := by
   compatible
 
 -- ### 足し算は狭義順序を保つ
+
 @[compatible]
 theorem MyNat.add_lt_add_left {m n : MyNat} (h : m < n) (k : MyNat)
     : k + m < k + n := by
@@ -128,6 +129,7 @@ theorem MyNat.le_of_add_le_add_right : m + k ≤ n + k → m ≤ n := by
   · intro h
     compatible
 
+/-- ≤ での足し算キャンセル -/
 @[simp] theorem MyNat.add_le_add_iff_right : m + k ≤ n + k ↔ m ≤ n := by
   constructor
   · apply MyNat.le_of_add_le_add_right
@@ -143,7 +145,7 @@ example (h1 : m₁ ≤ m₂) (h2 : n₁ ≤ n₂) (h3 : l₁ ≤ l₂)
   _ ≤ l₂ + n₂ + m₂ := by simp_all only [MyNat.add_le_add_iff_right,
     MyNat.add_le_add_iff_left]
 
--- ### 反対称律 a ≤ b → b ≤ a → a = b を示す
+-- ### a ≤ b → b ≤ a → a = b を示す
 
 variable {n m k : MyNat}
 theorem MyNat.lt_trans (h₁ : n < m) (h₂ : m < k) : n < k := by
@@ -203,5 +205,3 @@ example (a b : MyNat) : a < b ∨ a = b → a ≤ b := by
   | inl h =>
     exact MyNat.le_of_lt h
   | inr h => simp only [MyNat.le_refl, h]
-
--- ## DecidableOrder
