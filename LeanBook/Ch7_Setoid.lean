@@ -2,7 +2,7 @@ import LeanBook.Ch6_3_DecidableOrder
 
 -- ## Setoid
 
-/-- 2 次元平面-/
+/-- 2 次元平面 -/
 structure Point where
   x : Int
   y : Int
@@ -46,7 +46,7 @@ example {α : Type} : Equivalence (fun x y : α => x = y) := by
     intro x y z hxy hyz
     rw [hxy, hyz]
 
--- Setoid: 二項関係 r と、それが同値関係であることの証明をまとめたもの
+-- ### Setoid: 二項関係 r と、それが同値関係であることの証明をまとめたもの
 
 /-
 class Setoid (α : Sort u) where
@@ -105,7 +105,7 @@ section
   variable {I J : Type} (mergeRel : Setoid I)
   variable
     (toJLevel : I → J)
-    -- 同じ世界のインスタンスなら、どちらを代表元にしても同じjレベルを得る
+    -- [同じ世界のインスタンスなら、どちらを代表元にしても同じjレベルを得る]
     (h : ∀ i₁ i₂, i₁ ≈ i₂ → toJLevel i₁ = toJLevel i₂)
 
   #check (Quotient.lift toJLevel h : Quotient mergeRel → J) -- W → J
@@ -121,7 +121,7 @@ end
 
 /- Quotient.sound 同値なら商へ送っても等しい -/
 section
-  -- 二つのインスタンス i₁, i₂ が同一世界にマージされるなら、それぞれから作った世界個体は等しい
+  -- [二つのインスタンスが同一世界にマージされるなら、それぞれから作った世界個体は等しい]
   variable {I : Type} (mr : Setoid I)
   variable (i₁ i₂ : I) (h : i₁ ≈ i₂)
 
@@ -131,7 +131,7 @@ end
 
 /- Quotient.exact 商に送って等しいなら同値 -/
 section
-  -- 二つのインスタンスから作った世界個体が同じなら、その二つのインスタンスはマージ関係にある
+  -- [二つのインスタンスから作った世界個体が同じなら、その二つのインスタンスはマージ関係にある]
   variable {I : Type} (mr : Setoid I)
   variable (i₁ i₂ : I)
 
@@ -139,16 +139,30 @@ section
     exact Quotient.exact h
 end
 
-/-- β 上の二項関係 r : β → β → Prop と関数 f : α → β があるとき、
-α 上の二項関係を fun x y => r (f x) (f y) で定義できる-/
-private def Rel.comap {α β : Type} (f : α → β) (r : β → β → Prop)
-    : α → α → Prop :=
-  fun x y => r (f x) (f y)
+/-- J 上の二項関係 jRel : I → I → Prop を、関数 toJ : I → J を通じて I 上の二項関係に引き戻したもの
+関係を受け取って新しい関係を返す関数
+-/
+private def Rel.comap {I J : Type}
+    (toJ : I → J)
+    (jRel : J → J → Prop)
+    : I → I → Prop :=
+  fun (i₁ i₂) => jRel (toJ i₁) (toJ i₂)
 
-/-- β 上の同値関係 sr : Setoid β と関数 f : α → β があるとき、
-Rel.comap f (· ≈ ·) も同値関係になる-/
-private def Setoid.comap {α β : Type} (f : α → β) (sr : Setoid β)
-    : Setoid α where
-  r := Rel.comap f (· ≈ ·)
+/-- J 上の同値関係 jRel : Setoid J と関数 toJ : I → J があるなら、
+I 上の二項関係 Rel.comap も同値関係になる -/
+private def Setoid.comap {I J : Type}
+    (toJ : I → J)
+    (jRel : Setoid J)
+    : Setoid I where
+  r := Rel.comap toJ (· ≈ ·)
   iseqv := by
-    sorry
+    constructor <;> dsimp [Rel.comap]
+    case refl =>
+      intro i₁
+      apply jRel.iseqv.refl
+    case symm =>
+      intro i₁ i₂
+      apply jRel.iseqv.symm
+    case trans =>
+      intro i₁ i₂ i₃
+      apply jRel.iseqv.trans
