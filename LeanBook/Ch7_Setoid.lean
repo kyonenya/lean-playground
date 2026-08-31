@@ -96,7 +96,7 @@ section
   )
 end
 
--- ### Quotient.lift：関数を~~商へ持ち上げる~~商に降ろす操作
+-- Quotient.lift：関数を商へ持ち上げる操作
 
 -- もし関数 f : α → β が同値類 Quotient sr のどの要素に対しても同じ値を返すならば、f の定義域を Quotient sr に持ち上げて、Quotient sr → βという関数が得られます。この操作はQuotient.liftで実現できます
 section
@@ -119,21 +119,36 @@ section
     rfl
 end
 
+/- Quotient.sound 同値なら商へ送っても等しい -/
 section
-  /- ## 同値なら商へ送って等しい-/
-  variable {α : Type} (sr : Setoid α)
-  variable (x y : α) (h : x ≈ y)
+  -- 二つのインスタンス i₁, i₂ が同一世界にマージされるなら、それぞれから作った世界個体は等しい
+  variable {I : Type} (mr : Setoid I)
+  variable (i₁ i₂ : I) (h : i₁ ≈ i₂)
 
-  example : Quotient.mk sr x = Quotient.mk sr y := by
-    apply Quotient.sound
-    exact h
+  example : Quotient.mk mr i₁ = Quotient.mk mr i₂ := by
+    exact Quotient.sound h
 end
 
+/- Quotient.exact 商に送って等しいなら同値 -/
 section
-  /- ## 商に送って等しいなら同値-/
-  variable {α : Type} (sr : Setoid α)
-  variable (x y : α)
+  -- 二つのインスタンスから作った世界個体が同じなら、その二つのインスタンスはマージ関係にある
+  variable {I : Type} (mr : Setoid I)
+  variable (i₁ i₂ : I)
 
-  example (h : Quotient.mk sr x = Quotient.mk sr y) : x ≈ y := by
+  example (h : Quotient.mk mr i₁ = Quotient.mk mr i₂) : i₁ ≈ i₂ := by
     exact Quotient.exact h
 end
+
+/-- β 上の二項関係 r : β → β → Prop と関数 f : α → β があるとき、
+α 上の二項関係を fun x y => r (f x) (f y) で定義できる-/
+private def Rel.comap {α β : Type} (f : α → β) (r : β → β → Prop)
+    : α → α → Prop :=
+  fun x y => r (f x) (f y)
+
+/-- β 上の同値関係 sr : Setoid β と関数 f : α → β があるとき、
+Rel.comap f (· ≈ ·) も同値関係になる-/
+private def Setoid.comap {α β : Type} (f : α → β) (sr : Setoid β)
+    : Setoid α where
+  r := Rel.comap f (· ≈ ·)
+  iseqv := by
+    sorry
