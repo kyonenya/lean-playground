@@ -83,8 +83,7 @@ section
 
 end
 
--- ### Quotient.lift：関数を商へ持ち上げる操作
-
+-- ある型 β から商 Quotient sr への関数を得るには、たとえば自然な関数 α → Quotient sr と関数 β → α を合成すれば実現できます
 section
   -- 商への関数を作る
   variable {T I : Type} (mergeRel : Setoid I)
@@ -97,16 +96,19 @@ section
   )
 end
 
+-- ### Quotient.lift：関数を~~商へ持ち上げる~~商に降ろす操作
+
+-- もし関数 f : α → β が同値類 Quotient sr のどの要素に対しても同じ値を返すならば、f の定義域を Quotient sr に持ち上げて、Quotient sr → βという関数が得られます。この操作はQuotient.liftで実現できます
 section
   -- 商からの関数を作る：jLevel を求める関数
 
   variable {I J : Type} (mergeRel : Setoid I)
   variable
     (toJLevel : I → J)
-    -- 同じ世界のインスタンスなら、どちらを代表元にしても同じjレベルになる
+    -- 同じ世界のインスタンスなら、どちらを代表元にしても同じjレベルを得る
     (h : ∀ i₁ i₂, i₁ ≈ i₂ → toJLevel i₁ = toJLevel i₂)
 
-  #check (Quotient.lift toJLevel h : Quotient mergeRel → J)
+  #check (Quotient.lift toJLevel h : Quotient mergeRel → J) -- W → J
 
   -- Quotient.lift は元の関数の値を変えない
   example :
@@ -115,4 +117,23 @@ section
           = toJLevel i₁ := by
     intro i₁
     rfl
+end
+
+section
+  /- ## 同値なら商へ送って等しい-/
+  variable {α : Type} (sr : Setoid α)
+  variable (x y : α) (h : x ≈ y)
+
+  example : Quotient.mk sr x = Quotient.mk sr y := by
+    apply Quotient.sound
+    exact h
+end
+
+section
+  /- ## 商に送って等しいなら同値-/
+  variable {α : Type} (sr : Setoid α)
+  variable (x y : α)
+
+  example (h : Quotient.mk sr x = Quotient.mk sr y) : x ≈ y := by
+    exact Quotient.exact h
 end
