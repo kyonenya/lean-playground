@@ -166,3 +166,5 @@ private def Setoid.comap {I J : Type}
     case trans =>
       intro i₁ i₂ i₃
       apply jRel.iseqv.trans
+
+-- ---
