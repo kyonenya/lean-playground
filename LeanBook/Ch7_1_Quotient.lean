@@ -1,7 +1,5 @@
 import LeanBook.Ch6_3_DecidableOrder
 
--- ## Setoid
-
 /-- 2 次元平面 -/
 structure Point where
   x : Int
@@ -166,5 +164,3 @@ private def Setoid.comap {I J : Type}
     case trans =>
       intro i₁ i₂ i₃
       apply jRel.iseqv.trans
-
--- ---
