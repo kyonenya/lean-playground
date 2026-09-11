@@ -38,7 +38,7 @@ theorem PreInt.r.equiv : Equivalence r :=
   { refl := r.refl, symm := r.symm, trans := r.trans }
 
 /-- PreInt 上の同値関係 -/
-@[instance] def PreInt.sr : Setoid PreInt :=
+@[reducible, instance] def PreInt.sr : Setoid PreInt :=
   ⟨r, r.equiv⟩
 
 /-- MyNat × MyNat を同値関係で割ることで構成した整数 -/
