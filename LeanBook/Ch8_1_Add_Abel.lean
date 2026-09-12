@@ -1,22 +1,24 @@
 import Mathlib
 import LeanBook.Ch7_2_Int
 
-/-- 正も負も足し合わせる -/
+/-- 正部分も負部分も足し合わせる -/
 def PreInt.add (m n : PreInt) : MyInt :=
   match m, n with
   | (m₁, m₂), (n₁, n₂) => ⟦(m₁ + n₁, m₂ + n₂)⟧
 
+/-- liftにより引数がPreIntからそれの商をとったMyIntへと格上げされている -/
 def MyInt.add : MyInt → MyInt → MyInt :=
+  -- [Quotient.liftは第二引数で、異なる代表元aを選んでも関数結果が同じになることの証明を要求する]
   Quotient.lift₂ PreInt.add <| by
-  intro (m₁, m₂) (n₁, n₂) (m'₁, m'₂) (n'₁, n'₂) rm rn
-  dsimp [PreInt.add]
-  apply Quotient.sound
-  simp only [sr_def] at *
-  have : m₁ + n₁ + (m'₂ + n'₂) = m₂ + n₂ + (m'₁ + n'₁) := calc
-    _ = (m₁ + m'₂) + (n₁ + n'₂) := by ac_rfl
-    _ = (m₂ + m'₁) + (n₂ + n'₁) := by rw [rm, rn]
-    _ = m₂ + n₂ + (m'₁ + n'₁) := by ac_rfl
-  assumption
+    intro (m₁, m₂) (n₁, n₂) (m'₁, m'₂) (n'₁, n'₂) rm rn
+    dsimp [PreInt.add]
+    apply Quotient.sound
+    simp only [sr_def] at *
+    have : m₁ + n₁ + (m'₂ + n'₂) = m₂ + n₂ + (m'₁ + n'₁) := calc
+      _ = (m₁ + m'₂) + (n₁ + n'₂) := by ac_rfl
+      _ = (m₂ + m'₁) + (n₂ + n'₁) := by rw [rm, rn]
+      _ = m₂ + n₂ + (m'₁ + n'₁) := by ac_rfl
+    assumption
 
 instance instAddMyInt : Add MyInt where
   add := MyInt.add
@@ -26,7 +28,6 @@ instance instAddMyInt : Add MyInt where
 @[simp]
 theorem MyInt.add_def (x₁ x₂ y₁ y₂ : MyNat):
     ⟦(x₁, y₁)⟧ + ⟦(x₂, y₂)⟧ = (⟦(x₁ + x₂, y₁ + y₂)⟧ : MyInt) := by
-  -- Quotient.lift₂ / Quotient.lift / Quotient.mk は reducible ではないので、dsimp に明示的に渡さないと ⟦·⟧ への適用が簡約されない
   dsimp [(· + ·), Add.add, MyInt.add, PreInt.add,
     Quotient.lift₂, Quotient.lift, Quotient.mk]
 
@@ -37,17 +38,18 @@ attribute [notation_simp] PreInt.sr PreInt.r
 @[notation_simp, simp] theorem MyNat.ofNat_zero : MyNat.ofNat 0 = 0 := rfl
 
 @[simp]
-theorem MyInt.add_zero (m : MyInt) : m + 0 = m := by
-  refine Quotient.inductionOn m ?_
-  intro (a₁, a₂)
-  apply Quotient.sound
+theorem MyInt.add_zero (M : MyInt) : M + 0 = M := by
+  -- [inductionOnは第二引数で、任意の代表元aをとっても**それの同値類Aについて**命題が成り立つことの証明を要求する]
+  refine Quotient.inductionOn M ?_ -- ∀ (m : PreInt), ⟦m⟧ + 0 = ⟦m⟧
+  intro (m₁, m₂)
+  apply Quotient.sound -- [同値類での＝をもとの元での～に戻す]
   notation_simp
   ac_rfl
 
 @[simp]
-theorem MyInt.zero_add (m : MyInt) : 0 + m = m := by
-  refine Quotient.inductionOn m ?_
-  intro (a₁, a₂)
+theorem MyInt.zero_add (M : MyInt) : 0 + M = M := by
+  refine Quotient.inductionOn M ?_
+  intro (m₁, m₂)
   apply Quotient.sound
   notation_simp
   ac_rfl

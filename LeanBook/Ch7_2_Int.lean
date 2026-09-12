@@ -80,7 +80,7 @@ theorem MyInt.sr_def (m n : PreInt) : m ≈ n ↔ m.1 + n.2 = m.2 + n.1 := by rf
 
 def MyInt.neg : MyInt → MyInt := Quotient.lift PreInt.neg <| by
   -- PreInt.neg が同値関係を保つことを示したい
-  -- (a₁, a₂) : PreInt と(b₁, b₂) : PreInt が同値だと仮定する
+  -- (a₁, a₂) : PreInt と (b₁, b₂) : PreInt が同値だと仮定する
   intro (a₁, a₂) (b₁, b₂) hab
   -- このときneg (a₁, a₂) = neg (b₁, b₂) を示せばよいのだが
   -- 商空間におけるneg の定義により(a₂, a₁) ≈ (b₂, b₁) を示せばよい
@@ -98,7 +98,7 @@ neg := MyInt.neg
 
 #check (-4 : MyInt)
 
--- r はα 上の二項関係とする
+-- r は α 上の二項関係とする
 variable {α : Type} {r : α → α → Prop}
 
 private theorem Ex.symm (refl : ∀ x, r x x) (h : ∀ x y z, r x y → r y z → r z x)

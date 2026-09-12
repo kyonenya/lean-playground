@@ -6,6 +6,7 @@ def P (n : Nat) : Prop := n = n
 
 example : ∀ a : Nat, P a := by
   -- x : Nat が任意に与えられたとする
+  -- [「全ての～」を「任意の～」に読み替えて前提に加える]
   intro x
   -- P を展開すればあきらか
   -- dsimp：定義への展開
@@ -26,8 +27,8 @@ example : even 4 := by
   -- その述語を成り立たせるような具体的なxを与える
   exists 2
 
-example (α : Type) (P Q : α → Prop) (h : ∃ x : α, P x ∧ Q x)
-: ∃ x : α, Q x := by
+example (α : Type) (P Q : α → Prop) (h : ∃ x : α, P x ∧ Q x) :
+    ∃ x : α, Q x := by
   -- 仮定 h が存在を主張している y を取り出す
   obtain ⟨y, hy⟩ := h
   exists y
