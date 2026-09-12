@@ -2,7 +2,7 @@ import LeanBook.Ch8_1_Add_Abel
 
 /-- 単位元が何であるかを指定する -/
 instance : Zero MyNat where
-zero := 0
+  zero := 0
 
 /-- MyNatは可換なモノイド -/
 instance : AddCommMonoid MyNat where
@@ -28,7 +28,7 @@ instance : CommSemiring MyNat where
   mul_comm := MyNat.mul_comm
 
 example (a b c : MyNat) : (a + b) * (a + c) = a * a + (b + c) * a + b * c := by
--- 分配法則や交換法則を自動で使って証明をしてくれるようになった
+  -- 分配法則や交換法則を自動で使って証明をしてくれるようになった
   ring
 
 /-- (m₁ - m₂) * (n₁ - n₂) = (m₁ * n₁ + m₂ * n₂) - (m₁ * n₂ + m₂ * n₁) -/

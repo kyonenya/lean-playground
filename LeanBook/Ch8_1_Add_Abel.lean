@@ -1,6 +1,7 @@
 import Mathlib
 import LeanBook.Ch7_2_Int
 
+/-- 正も負も足し合わせる -/
 def PreInt.add (m n : PreInt) : MyInt :=
   match m, n with
   | (m₁, m₂), (n₁, n₂) => ⟦(m₁ + n₁, m₂ + n₂)⟧
@@ -23,8 +24,8 @@ instance instAddMyInt : Add MyInt where
 #check (3 + 4 : MyInt)
 
 @[simp]
-theorem MyInt.add_def (x₁ x₂ y₁ y₂ : MyNat)
-: ⟦(x₁, y₁)⟧ + ⟦(x₂, y₂)⟧ = (⟦(x₁ + x₂, y₁ + y₂)⟧ : MyInt) := by
+theorem MyInt.add_def (x₁ x₂ y₁ y₂ : MyNat):
+    ⟦(x₁, y₁)⟧ + ⟦(x₂, y₂)⟧ = (⟦(x₁ + x₂, y₁ + y₂)⟧ : MyInt) := by
   -- Quotient.lift₂ / Quotient.lift / Quotient.mk は reducible ではないので、dsimp に明示的に渡さないと ⟦·⟧ への適用が簡約されない
   dsimp [(· + ·), Add.add, MyInt.add, PreInt.add,
     Quotient.lift₂, Quotient.lift, Quotient.mk]
