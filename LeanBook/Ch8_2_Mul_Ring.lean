@@ -37,11 +37,12 @@ def PreInt.mul (m n : PreInt) : MyInt :=
   | (m₁, m₂), (n₁, n₂) => ⟦(m₁ * n₁ + m₂ * n₂, m₁ * n₂ + m₂ * n₁)⟧
 
 /-- 整数の掛け算-/
-def MyInt.mul : MyInt → MyInt → MyInt := Quotient.lift₂ PreInt.mul <| by
+def MyInt.mul : MyInt → MyInt → MyInt :=
+  Quotient.lift₂ PreInt.mul <| by
   intro (a, b) (c, d) (p, q) (r, s) h₁ h₂
   dsimp [PreInt.mul]
   apply Quotient.sound
-  notation_simp at *
+  simp only [sr_def] at *
 
   -- 左辺と右辺をそれぞれ長いので変数におく
   generalize hl : a * c + b * d + (p * s + q * r) = lhs
@@ -73,45 +74,45 @@ instance : Mul MyInt where
 theorem MyNat.toMyNat_one : MyNat.ofNat 1 = 1 := rfl
 
 @[simp]
-theorem MyInt.mul_one (m : MyInt) : m * 1 = m := by
-  revert m
+theorem MyInt.mul_one (M : MyInt) : M * 1 = M := by
+  revert M
   unfold_int₁
   ring
 
 @[simp]
-theorem MyInt.one_mul (m : MyInt) : 1 * m = m := by
-  revert m
+theorem MyInt.one_mul (M : MyInt) : 1 * M = M := by
+  revert M
   unfold_int₁
   ring
 
 @[simp]
-theorem MyInt.mul_zero (m : MyInt) : m * 0 = 0 := by
-  revert m
+theorem MyInt.mul_zero (M : MyInt) : M * 0 = 0 := by
+  revert M
   unfold_int₁
 
 @[simp]
-theorem MyInt.zero_mul (m : MyInt) : 0 * m = 0 := by
-  revert m
+theorem MyInt.zero_mul (M : MyInt) : 0 * M = 0 := by
+  revert M
   unfold_int₁
   ring
 
-theorem MyInt.mul_comm (m n : MyInt) : m * n = n * m := by
-  revert m n
+theorem MyInt.mul_comm (M N : MyInt) : M * N = N * M := by
+  revert M N
   unfold_int₂
   ring
 
-theorem MyInt.mul_assoc (m n k : MyInt) : m * n * k = m * (n * k) := by
-  revert m n k
+theorem MyInt.mul_assoc (M N K : MyInt) : M * N * K = M * (N * K) := by
+  revert M N K
   unfold_int₃
   ring
 
-theorem MyInt.left_distrib (m n k : MyInt) : m * (n + k) = m * n + m * k := by
-  revert m n k
+theorem MyInt.left_distrib (M N K : MyInt) : M * (N + K) = M * N + M * K := by
+  revert M N K
   unfold_int₃
   ring
 
-theorem MyInt.right_distrib (m n k : MyInt) : (m + n) * k = m * k + n * k := by
-  revert m n k
+theorem MyInt.right_distrib (M N K : MyInt) : (M + N) * K = M * K + N * K := by
+  revert M N K
   unfold_int₃
   ring
 
@@ -127,5 +128,5 @@ instance : CommRing MyInt where
   zsmul := zsmulRec
   neg_add_cancel := MyInt.neg_add_cancel
 
-example (m n : MyInt) : (m - n) * (m + n) = m * m - n * n := by
+example (M N : MyInt) : (M - N) * (M + N) = M * M - N * N := by
   ring

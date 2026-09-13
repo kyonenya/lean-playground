@@ -48,35 +48,35 @@ theorem MyInt.add_zero (M : MyInt) : M + 0 = M := by
 
 @[simp]
 theorem MyInt.zero_add (M : MyInt) : 0 + M = M := by
-  refine Quotient.inductionOn M ?_
+  refine Quotient.inductionOn M ?_ -- [商の要素を任意の代表元からみた同値類へと書き直す]
   intro (m₁, m₂)
-  apply Quotient.sound
+  apply Quotient.sound -- [同値類をもとの元に戻す]
   notation_simp
   ac_rfl
 
 /-- 整数に関する命題を自然数の話に帰着させる（1 変数用） -/
 macro "unfold_int₁" : tactic => `(tactic| focus
-  intro m
-  refine Quotient.inductionOn m ?_
+  intro M
+  refine Quotient.inductionOn M ?_
   intro (a₁, a₂)
   apply Quot.sound
   notation_simp
 )
 
-example (m : MyInt) : m + 0 = m := by
-  revert m -- revert でゴールを∀ m, m + 0 = m にする
+example (M : MyInt) : M + 0 = M := by
+  revert M -- revert でゴールを∀ M, M + 0 = M にする
   unfold_int₁
   ac_rfl
 
-example (m : MyInt) : 0 + m = m := by
-  revert m -- revert でゴールを∀ m, 0 + m = m にする
+example (M : MyInt) : 0 + M = M := by
+  revert M -- revert でゴールを∀ M, 0 + M = M にする
   unfold_int₁
   ac_rfl
 
 /-- 整数に関する命題を自然数の話に帰着させる（2 変数用） -/
 macro "unfold_int₂" : tactic => `(tactic| focus
-  intro m n
-  refine Quotient.inductionOn₂ m n ?_
+  intro M N
+  refine Quotient.inductionOn₂ M N ?_
   intro (a₁, a₂) (b₁, b₂)
   apply Quot.sound
   notation_simp
@@ -84,21 +84,21 @@ macro "unfold_int₂" : tactic => `(tactic| focus
 
 /-- 整数に関する命題を自然数の話に帰着させる（3 変数用） -/
 macro "unfold_int₃" : tactic => `(tactic| focus
-  intro m n k
-  refine Quotient.inductionOn₃ m n k ?_
+  intro M N K
+  refine Quotient.inductionOn₃ M N K ?_
   intro (a₁, a₂) (b₁, b₂) (c₁, c₂)
   apply Quot.sound
   notation_simp
 )
 
-theorem MyInt.add_assoc (m n k : MyInt) :
-    m + n + k = m + (n + k) := by
-  revert m n k
+theorem MyInt.add_assoc (M N K : MyInt) :
+    M + N + K = M + (N + K) := by
+  revert M N K
   unfold_int₃
   ac_rfl
 
-theorem MyInt.add_comm (m n : MyInt) : m + n = n + m := by
-  revert m n
+theorem MyInt.add_comm (M N : MyInt) : M + N = N + M := by
+  revert M N
   unfold_int₂
   ac_rfl
 
@@ -111,18 +111,18 @@ instance : Std.Commutative (α := MyInt) (· + ·) where
   comm := MyInt.add_comm
 
 /-- 整数の引き算-/
-def MyInt.sub (m n : MyInt) : MyInt := m + -n
+def MyInt.sub (M N : MyInt) : MyInt := M + -N
 
-/-- 引き算をa - b と書けるように型クラスに登録する -/
+/-- 引き算をA - B と書けるように型クラスに登録する -/
 instance : Sub MyInt where
   sub := MyInt.sub
 
 -- 後で使うので補題として登録しておく
 @[simp, notation_simp]
-theorem MyInt.sub_def (x y : MyInt) : x - y = x + -y := rfl
+theorem MyInt.sub_def (X Y : MyInt) : X - Y = X + -Y := rfl
 
-theorem MyInt.neg_add_cancel (m : MyInt) : -m + m = 0 := by
-  revert m
+theorem MyInt.neg_add_cancel (M : MyInt) : -M + M = 0 := by
+  revert M
   unfold_int₁
   ac_rfl
 
@@ -137,8 +137,8 @@ instance : AddCommGroup MyInt where
   zsmul := zsmulRec
 
 -- abel タクティクは引き算を扱える
-example (a b : MyInt) : (a + b) - b = a := by
+example (A B : MyInt) : (A + B) - B = A := by
   abel
 
-example (a b c : MyInt) : (a - b) - c + b + c = a := by
+example (A B C : MyInt) : (A - B) - C + B + C = A := by
   abel
