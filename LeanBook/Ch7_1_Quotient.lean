@@ -26,10 +26,15 @@ example {α : Type}
 
 -- A : Quotient sr
 -- α の同値関係 sr による商 𝔸 の要素
+-- A = ⟦a⟧
 
 -- ### Quotient.mk：同値類を取る
 
 -- Quotient.mk : Setoid α → α → 𝔸
+
+-- ⟦·⟧ : Quotient.mk _sr
+
+-- ⟦a⟧ : Quotient.mk _sr a
 
 section
   variable {α β : Type} (sr : Setoid α)
@@ -45,27 +50,32 @@ end
 
 -- ### Quotient.inductionOn：同値類の代表元を取る
 
--- A → a
+-- P⟦a⟧ <-apply- P(A)
+
+-- P (Quotient.mk sr) a₁ <- P (A)
+--        (α → 𝔸)
 
 section
+  variable {α : Type} (sr : Setoid α)
+
   example (A : Quotient sr) : True := by
+    --  ∀A P(A) を ∀a P(⟦a⟧) に帰着させる
     induction A using Quotient.inductionOn with
     | h a =>
       trivial
 end
 
--- ### Quotient.lift：関数を商へ持ち上げる
+-- ### Quotient.lift：関数を商へと誘導する
 
 -- f : α → β
 -- Quotient.lift f h : 𝔸 → β
 
 -- h : ∀ (x y : α), x ≈ y → f x = f y
--- 異なる代表元を選んでも関数結果が同じになる
+-- 異なる代表元を選んでも関数結果が同じになる well-definedness
 
 section
   variable {α β : Type} (sr : Setoid α)
   variable (f : α → β)
-  -- Quotient.liftするときは毎回、異なる代表元を選んでも関数結果が同じになることを証明しなければならない
  variable (h : ∀ x y, x ≈ y → f x = f y)
 
   -- f : α → β
@@ -82,21 +92,23 @@ section
   variable {α : Type} (sr : Setoid α)
   variable (a₁ a₂ : α) (h : a₁ ≈ a₂)
 
--- ### Quotient.sound：元の世界で同値な二つの元は商の世界では同じ要素に潰れる
+-- ### Quotient.sound : ≈ → =
 
 -- a₁ ≈ a₂ → A = A
 
   /-- (α → 𝔸) a₁ = (α → 𝔸) a₂ -/
   example : Quotient.mk sr a₁ = Quotient.mk sr a₂ := by -- A₁ = A₂
+    -- 元の世界で同値な二つの元は商の世界では同じ要素に潰れる
     apply Quotient.sound -- a₁ ≈ a₂ → A₁ = A₂
     exact h
 
   variable (p q : α)
 
--- ### Quotient.exact： 商の世界で同じ要素に潰れる二つの元は、元の世界でも同値
+-- ### Quotient.exact : ≈ ← =
 
 -- A₁ = A₂ → a₁ ≈ a₂
 
   example (h : Quotient.mk sr a₁ = Quotient.mk sr a₂) : a₁ ≈ a₂ := by
+    -- 商の世界で同じ要素に潰れる二つの元は、元の世界でも同値
     exact Quotient.exact h
 end
