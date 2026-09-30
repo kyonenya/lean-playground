@@ -32,9 +32,9 @@ example {α : Type}
 
 -- Quotient.mk : Setoid α → α → 𝔸
 
--- ⟦·⟧ : Quotient.mk _sr
+-- ⟦·⟧ : Quotient.mk _
 
--- ⟦a⟧ : Quotient.mk _sr a
+-- ⟦a⟧ : Quotient.mk sr a
 
 section
   variable {α β : Type} (sr : Setoid α)
@@ -50,16 +50,16 @@ end
 
 -- ### Quotient.inductionOn：同値類の代表元を取る
 
--- P⟦a⟧ <-apply- P(A)
+-- P⟦a⟧ <- P(A)
 
--- P (Quotient.mk sr) a₁ <- P (A)
+-- P (Quotient.mk sr a₁) <- P (A)
 --        (α → 𝔸)
 
 section
   variable {α : Type} (sr : Setoid α)
 
   example (A : Quotient sr) : True := by
-    --  ∀A P(A) を ∀a P(⟦a⟧) に帰着させる
+    -- ∀A P(A) を ∀a P(⟦a⟧) に帰着させる
     induction A using Quotient.inductionOn with
     | h a =>
       trivial
@@ -70,13 +70,12 @@ end
 -- f : α → β
 -- Quotient.lift f h : 𝔸 → β
 
--- h : ∀ (x y : α), x ≈ y → f x = f y
--- 異なる代表元を選んでも関数結果が同じになる well-definedness
+-- h : a ≈ a' → f a = f a' (well-definedness)
 
 section
   variable {α β : Type} (sr : Setoid α)
   variable (f : α → β)
- variable (h : ∀ x y, x ≈ y → f x = f y)
+  variable (h : ∀ a a', a ≈ a' → f a = f a')
 
   -- f : α → β
   #check Quotient.lift f h -- F : 𝔸 → β
@@ -96,10 +95,10 @@ section
 
 -- a₁ ≈ a₂ → A = A
 
-  /-- (α → 𝔸) a₁ = (α → 𝔸) a₂ -/
+  /-- ⟦a₁⟧ = ⟦a₂⟧ -/
   example : Quotient.mk sr a₁ = Quotient.mk sr a₂ := by -- A₁ = A₂
-    -- 元の世界で同値な二つの元は商の世界では同じ要素に潰れる
-    apply Quotient.sound -- a₁ ≈ a₂ → A₁ = A₂
+    -- 元の世界で同値な二つの元は、商の世界では同じ要素に潰れる
+    apply Quotient.sound -- a₁ ≈ a₂ <- A₁ = A₂
     exact h
 
   variable (p q : α)
