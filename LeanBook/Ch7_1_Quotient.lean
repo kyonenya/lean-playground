@@ -50,20 +50,16 @@ end
 
 -- ### Quotient.inductionOn：同値類の代表元を取る
 
--- P⟦a⟧ <- P(A)
+-- P A を P ⟦a⟧ に帰着させる
 
--- P (Quotient.mk sr a₁) <- P (A)
---        (α → 𝔸)
+-- Quotient.inductionOn A _?
+-- ⊢ P ⟦a⟧
 
-section
-  variable {α : Type} (sr : Setoid α)
-
-  example (A : Quotient sr) : True := by
-    -- ∀A P(A) を ∀a P(⟦a⟧) に帰着させる
-    induction A using Quotient.inductionOn with
-    | h a =>
-      trivial
-end
+example (A : Quotient sr)
+    : ∃ a, Quotient.mk sr a = A := by -- P A
+  refine Quotient.inductionOn A ?_ -- ⊢ P ⟦a⟧
+  intro a
+  exact ⟨a, rfl⟩
 
 -- ### Quotient.lift：関数を商へと誘導する
 
@@ -71,6 +67,7 @@ end
 -- Quotient.lift f h : 𝔸 → β
 
 -- h : a ≈ a' → f a = f a' (well-definedness)
+-- 𝔸から異なる代表元aを選んでも関数結果が同じになることの証明
 
 section
   variable {α β : Type} (sr : Setoid α)
@@ -87,13 +84,13 @@ section
     dsimp [Quotient.lift, Quotient.mk]
 end
 
-section
-  variable {α : Type} (sr : Setoid α)
-  variable (a₁ a₂ : α) (h : a₁ ≈ a₂)
-
 -- ### Quotient.sound : ≈ → =
 
 -- a₁ ≈ a₂ → A = A
+
+section
+  variable {α : Type} (sr : Setoid α)
+  variable (a₁ a₂ : α) (h : a₁ ≈ a₂)
 
   /-- ⟦a₁⟧ = ⟦a₂⟧ -/
   example : Quotient.mk sr a₁ = Quotient.mk sr a₂ := by -- A₁ = A₂

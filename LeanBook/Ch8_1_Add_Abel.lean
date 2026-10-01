@@ -39,7 +39,7 @@ attribute [notation_simp] PreInt.sr PreInt.r
 
 @[simp]
 theorem MyInt.add_zero (M : MyInt) : M + 0 = M := by
-  -- [inductionOnは第二引数で、任意の代表元aをとっても**それの同値類Aについて**命題が成り立つことの証明を要求する]
+  -- [inductionOnで商についての命題をもとの元＋同値類についての命題に戻す]
   refine Quotient.inductionOn M ?_ -- ∀ (m : PreInt), ⟦m⟧ + 0 = ⟦m⟧
   intro (m₁, m₂)
   apply Quotient.sound -- [同値類での＝をもとの元での～に戻す]
@@ -48,7 +48,7 @@ theorem MyInt.add_zero (M : MyInt) : M + 0 = M := by
 
 @[simp]
 theorem MyInt.zero_add (M : MyInt) : 0 + M = M := by
-  refine Quotient.inductionOn M ?_ -- [商の要素を任意の代表元からみた同値類へと書き直す]
+  refine Quotient.inductionOn M ?_
   intro (m₁, m₂)
   apply Quotient.sound -- [同値類をもとの元に戻す]
   notation_simp
